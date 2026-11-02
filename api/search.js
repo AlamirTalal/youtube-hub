@@ -1,12 +1,14 @@
 function parseDuration(iso) {
-  const m = iso.match(/PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?/);
+  const m = (iso || "").match(/PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?/);
   if (!m) return 0;
   const [, h = 0, min = 0, s = 0] = m;
   return Number(h) * 3600 + Number(min) * 60 + Number(s);
 }
 
+const ORDERS = ["relevance", "date", "viewCount", "rating"];
+
 export default async function handler(req, res) {
-  const { q, pageToken } = req.query;
+  const { q, pageToken, lang, order } = req.query;
   const key = process.env.YOUTUBE_API_KEY;
 
   if (!key) return res.status(500).json({ error: "API key not configured" });
@@ -19,8 +21,10 @@ export default async function handler(req, res) {
       type: "video",
       maxResults: "30",
       q: q.trim(),
+      order: ORDERS.includes(order) ? order : "relevance",
       key,
     });
+    if (lang && /^[a-z]{2}$/.test(lang)) searchParams.set("relevanceLanguage", lang);
     if (pageToken) searchParams.set("pageToken", pageToken);
 
     const searchRes = await fetch(
@@ -33,12 +37,12 @@ export default async function handler(req, res) {
         .json({ error: searchData.error?.message || "YouTube error" });
     }
 
-    const ids = searchData.items.map((i) => i.id.videoId).filter(Boolean);
+    const ids = (searchData.items || []).map((i) => i.id?.videoId).filter(Boolean);
     if (ids.length === 0) {
       return res.json({ items: [], nextPageToken: searchData.nextPageToken || null });
     }
 
-    // 2) تفاصيل الفيديوهات (بتكلف وحدة واحدة بس) عشان المدة والوصف
+    // 2) تفاصيل الفيديوهات (وحدة واحدة بس) عشان المدة والوصف
     const detailsParams = new URLSearchParams({
       part: "snippet,contentDetails",
       id: ids.join(","),
@@ -50,20 +54,20 @@ export default async function handler(req, res) {
     const detailsData = await detailsRes.json();
 
     // 3) استبعاد الشورتس (أقل من أو يساوي 60 ثانية) وتجهيز البيانات
-    const items = detailsData.items
-      .filter((v) => parseDuration(v.contentDetails.duration) > 60)
+    const items = (detailsData.items || [])
+      .filter((v) => parseDuration(v.contentDetails?.duration) > 60)
       .map((v) => ({
         id: v.id,
         title: v.snippet.title,
         description: v.snippet.description,
         thumbnail:
-          v.snippet.thumbnails.high?.url || v.snippet.thumbnails.default?.url,
+          v.snippet.thumbnails?.high?.url || v.snippet.thumbnails?.default?.url,
         channelId: v.snippet.channelId,
         channelTitle: v.snippet.channelTitle,
         channelUrl: `https://www.youtube.com/channel/${v.snippet.channelId}`,
       }));
 
-    // كاش على مستوى Vercel عشان نوفر الحصة لو حد بحث نفس الكلمة
+    // كاش على Vercel (بيختلف حسب الكلمة واللغة والترتيب)
     res.setHeader("Cache-Control", "s-maxage=300, stale-while-revalidate=600");
     res.json({ items, nextPageToken: searchData.nextPageToken || null });
   } catch (err) {
