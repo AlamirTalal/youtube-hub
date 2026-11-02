@@ -3,7 +3,14 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>FakeTube</title>
+  <meta name="color-scheme" content="light dark" />
+  <title>FakeTube — يوتيوب على مزاجك</title>
+  <meta name="description" content="FakeTube — فيد يوتيوب مخصص لاهتماماتك فقط. اختار مواضيعك، واتفرج على اللي يهمك من غير تشتيت." />
+  <meta name="theme-color" content="#ff0000" />
+  <meta property="og:title" content="FakeTube — يوتيوب على مزاجك" />
+  <meta property="og:description" content="فيد مخصص لاهتماماتك فقط، من غير تشتيت." />
+  <meta property="og:type" content="website" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect width='24' height='24' rx='6' fill='%23ff0000'/%3E%3Cpath d='M9 7l8 5-8 5z' fill='white'/%3E%3C/svg%3E" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Noto+Sans+Arabic:wght@400;500;700&display=swap" rel="stylesheet" />
@@ -11,9 +18,11 @@
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
+  <a class="skip-link" href="#main" data-i18n="skipToContent">تخطى للمحتوى</a>
+
   <header class="topbar">
     <div class="topbar-start">
-      <button id="menuBtn" class="icon-btn" type="button" aria-label="Menu">
+      <button id="menuBtn" class="icon-btn" type="button" aria-label="القائمة" aria-controls="sidebar" aria-expanded="false" data-i18n-aria="menu">
         <span class="material-symbols-rounded">menu</span>
       </button>
       <a class="brand" href="/">
@@ -22,23 +31,29 @@
       </a>
     </div>
 
-    <form id="searchForm" class="search-form">
+    <form id="searchForm" class="search-form" role="search">
+      <label class="sr-only" for="searchInput" data-i18n="searchLabel">بحث</label>
       <input id="searchInput" type="search" data-i18n-placeholder="searchPlaceholder" placeholder="ابحث عن فيديو أو مجال..." autocomplete="off" />
-      <button type="submit" class="search-btn" aria-label="Search">
+      <button type="submit" class="search-btn" aria-label="بحث" data-i18n-aria="searchLabel">
         <span class="material-symbols-rounded">search</span>
       </button>
     </form>
 
     <div class="topbar-end">
-      <button id="langBtn" class="lang-btn" type="button">EN</button>
-      <button id="themeBtn" class="icon-btn" type="button" aria-label="Theme">
+      <button id="langBtn" class="lang-btn" type="button">
+        <span id="langBtnText">EN</span>
+        <span class="sr-only" data-i18n="langLabel">تغيير اللغة</span>
+      </button>
+      <button id="themeBtn" class="icon-btn" type="button" aria-label="تبديل المظهر" data-i18n-aria="themeLabel">
         <span class="material-symbols-rounded">dark_mode</span>
       </button>
     </div>
   </header>
 
+  <div id="backdrop" class="backdrop hidden"></div>
+
   <div class="layout">
-    <aside class="sidebar" id="sidebar">
+    <aside class="sidebar" id="sidebar" aria-label="القائمة" data-i18n-aria="menu">
       <button class="tab active" data-view="home" type="button">
         <span class="material-symbols-rounded">home</span>
         <span data-i18n="tabHome">الرئيسية</span>
@@ -51,41 +66,66 @@
         <span class="material-symbols-rounded">history</span>
         <span data-i18n="tabHistory">السجل</span>
       </button>
+      <button class="tab" data-view="later" type="button">
+        <span class="material-symbols-rounded">schedule</span>
+        <span data-i18n="tabLater">اتفرج بعدين</span>
+      </button>
+      <button class="tab" data-view="playlists" type="button">
+        <span class="material-symbols-rounded">playlist_play</span>
+        <span data-i18n="tabPlaylists">قوايمي</span>
+      </button>
       <button class="tab" data-view="follows" type="button">
         <span class="material-symbols-rounded">subscriptions</span>
-        <span data-i18n="tabFollows">المجالات</span>
+        <span data-i18n="tabFollows">قنواتي</span>
+      </button>
+      <button class="tab" data-view="stats" type="button">
+        <span class="material-symbols-rounded">insights</span>
+        <span data-i18n="tabStats">إحصائياتي</span>
       </button>
 
       <button id="editProfileBtn" class="tab-action" type="button">
         <span class="material-symbols-rounded">tune</span>
         <span data-i18n="editProfile">تعديل اهتماماتي</span>
       </button>
+      <button id="settingsBtn" class="tab-action" type="button">
+        <span class="material-symbols-rounded">settings</span>
+        <span data-i18n="settings">الإعدادات</span>
+      </button>
     </aside>
 
     <div class="content">
       <div class="chips-bar">
-        <nav class="categories" id="categories"></nav>
+        <nav class="categories" id="categories" aria-label="التصنيفات" data-i18n-aria="categoriesLabel"></nav>
       </div>
 
-      <main>
-        <section id="results" class="grid"></section>
-        <div id="status" class="status"></div>
+      <main id="main">
+        <section id="results" class="grid" aria-live="polite"></section>
+        <div id="status" class="status" role="status" aria-live="polite"></div>
         <div id="sentinel" class="sentinel"></div>
       </main>
     </div>
   </div>
 
   <!-- صفحة الترحيب والاهتمامات -->
-  <section id="welcome" class="welcome hidden">
-    <button id="welcomeClose" class="close-btn welcome-close hidden" type="button" aria-label="Close">
+  <section id="welcome" class="welcome hidden" role="dialog" aria-modal="true" aria-labelledby="welcomeTitle">
+    <button id="welcomeClose" class="close-btn welcome-close hidden" type="button" aria-label="إغلاق" data-i18n-aria="close">
       <span class="material-symbols-rounded">close</span>
     </button>
     <div class="welcome-inner">
-      <h2 data-i18n="welcomeTitle">أهلاً بيك</h2>
+      <h2 id="welcomeTitle" data-i18n="welcomeTitle">أهلاً بيك</h2>
       <p class="welcome-sub" data-i18n="welcomeSub">اختار اهتماماتك عشان نجهز لك الفيد</p>
 
       <h3 data-i18n="pickInterests">إيه اللي بيهمك؟</h3>
       <div id="interestOptions" class="chip-grid"></div>
+
+      <h3 data-i18n="customTopics">مواضيعك الخاصة</h3>
+      <p class="welcome-hint" data-i18n="customHint">ضيف أي موضوع أو كلمة بحث بنفسك — هنستخدمها في الفيد والبحث.</p>
+      <form id="customForm" class="custom-add">
+        <label class="sr-only" for="customInput" data-i18n="customTopics">مواضيعك الخاصة</label>
+        <input id="customInput" type="text" maxlength="60" data-i18n-placeholder="customPlaceholder" placeholder="اكتب موضوع أو كلمة بحث..." autocomplete="off" />
+        <button type="submit" data-i18n="add">إضافة</button>
+      </form>
+      <div id="customOptions" class="chip-grid"></div>
 
       <h3 data-i18n="pickPrimary">لغتك المفضلة</h3>
       <div id="primaryOptions" class="chip-grid"></div>
@@ -98,15 +138,20 @@
   </section>
 
   <!-- صفحة الفيديو -->
-  <section id="player" class="player hidden">
-    <button id="closePlayer" class="close-btn" type="button" aria-label="Close">
+  <section id="player" class="player hidden" role="dialog" aria-modal="true" aria-labelledby="playerTitle">
+    <button id="closePlayer" class="close-btn" type="button" aria-label="إغلاق" data-i18n-aria="close">
       <span class="material-symbols-rounded">arrow_back</span>
     </button>
     <div class="player-layout">
       <div class="video-wrap">
-        <iframe id="videoFrame" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+        <div id="videoFrameWrap" class="video-frame-wrap"></div>
+      </div>
+      <div id="resumeNote" class="resume-note hidden">
+        <span id="resumeText"></span>
+        <button id="restartBtn" class="resume-btn" type="button" data-i18n="startOver">من الأول</button>
       </div>
       <h2 id="playerTitle"></h2>
+      <div id="playerStats" class="player-stats"></div>
       <div class="player-meta">
         <div class="channel-block">
           <span class="material-symbols-rounded avatar">account_circle</span>
@@ -115,11 +160,65 @@
         </div>
         <div class="player-actions">
           <button id="likeBtn" class="pill-btn" type="button"></button>
+          <button id="laterBtn" class="pill-btn" type="button"></button>
+          <button id="playlistBtn" class="pill-btn" type="button"></button>
+          <button id="blockBtn" class="pill-btn" type="button"></button>
         </div>
       </div>
       <p id="playerDesc" class="desc"></p>
     </div>
   </section>
+
+  <!-- الإعدادات -->
+  <section id="settings" class="dialog hidden" role="dialog" aria-modal="true" aria-labelledby="settingsTitle">
+    <div class="dialog-inner">
+      <button id="closeSettings" class="icon-btn dialog-close" type="button" aria-label="إغلاق" data-i18n-aria="close">
+        <span class="material-symbols-rounded">close</span>
+      </button>
+      <h2 id="settingsTitle" data-i18n="settings">الإعدادات</h2>
+
+      <label class="setting-row" for="setThumbnails">
+        <span class="setting-text">
+          <span class="setting-name" data-i18n="useThumbnails">استخدام الصور المصغرة</span>
+          <span class="setting-hint" data-i18n="useThumbnailsHint">افتراضيًا بنعرض فريم عشوائي من الفيديو بدل الصورة المصغرة.</span>
+        </span>
+        <input id="setThumbnails" class="switch" type="checkbox" />
+      </label>
+
+      <label class="setting-row" for="setCardMeta">
+        <span class="setting-text">
+          <span class="setting-name" data-i18n="showCardMeta">إظهار المشاهدات والتاريخ في الكروت</span>
+          <span class="setting-hint" data-i18n="showCardMetaHint">افتراضيًا الكارت فيه الصورة والعنوان واسم القناة بس.</span>
+        </span>
+        <input id="setCardMeta" class="switch" type="checkbox" />
+      </label>
+
+      <div class="settings-actions">
+        <button id="clearStatsBtn" class="pill-btn" type="button" data-i18n="clearStats">مسح الإحصائيات</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- إضافة لقائمة -->
+  <section id="playlistDialog" class="dialog hidden" role="dialog" aria-modal="true" aria-labelledby="playlistDialogTitle">
+    <div class="dialog-inner">
+      <button id="closePlaylistDialog" class="icon-btn dialog-close" type="button" aria-label="إغلاق" data-i18n-aria="close">
+        <span class="material-symbols-rounded">close</span>
+      </button>
+      <h2 id="playlistDialogTitle" data-i18n="addToPlaylist">أضف لقائمة</h2>
+      <div id="playlistOptions" class="playlist-options"></div>
+      <form id="newPlaylistForm" class="custom-add">
+        <label class="sr-only" for="newPlaylistInput" data-i18n="playlistName">اسم القائمة</label>
+        <input id="newPlaylistInput" type="text" maxlength="50" data-i18n-placeholder="playlistName" placeholder="اسم القائمة" autocomplete="off" />
+        <button type="submit" data-i18n="create">إنشاء</button>
+      </form>
+    </div>
+  </section>
+
+  <div id="toast" class="toast hidden" role="status" aria-live="polite">
+    <span id="toastMsg"></span>
+    <button id="toastAction" type="button" class="toast-action"></button>
+  </div>
 
   <script src="app.js"></script>
 </body>

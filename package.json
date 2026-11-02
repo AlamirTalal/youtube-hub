@@ -1,0 +1,12 @@
+{
+  "name": "faketube",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "فيد يوتيوب مخصص لاهتماماتك فقط — واجهة خفيفة + Vercel Serverless Function.",
+  "scripts": {
+    "dev": "vercel dev",
+    "dev:mock": "node dev/mock-server.mjs",
+    "deploy": "vercel --prod"
+  }
+}
