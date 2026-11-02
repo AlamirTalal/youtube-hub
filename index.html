@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>YouTube Hub</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header class="topbar">
+    <h1 class="logo" data-i18n="appName">YouTube Hub</h1>
+
+    <form id="searchForm" class="search-form">
+      <input id="searchInput" type="search" data-i18n-placeholder="searchPlaceholder" placeholder="ابحث عن فيديو أو مجال..." autocomplete="off" />
+      <button type="submit" data-i18n="searchBtn">بحث</button>
+    </form>
+
+    <div class="controls">
+      <button id="langBtn" class="ghost" type="button">EN</button>
+      <button id="themeBtn" class="ghost" type="button">🌙</button>
+    </div>
+  </header>
+
+  <nav class="categories" id="categories"></nav>
+
+  <nav class="tabs">
+    <button class="tab active" data-view="home" data-i18n="tabHome">الرئيسية</button>
+    <button class="tab" data-view="likes" data-i18n="tabLikes">اللايكات</button>
+    <button class="tab" data-view="history" data-i18n="tabHistory">السجل</button>
+    <button class="tab" data-view="follows" data-i18n="tabFollows">المجالات</button>
+  </nav>
+
+  <main>
+    <section id="results" class="grid"></section>
+    <div id="status" class="status"></div>
+    <div id="sentinel" class="sentinel"></div>
+  </main>
+
+  <!-- صفحة الفيديو -->
+  <section id="player" class="player hidden">
+    <button id="closePlayer" class="ghost close" type="button">✕</button>
+    <div class="player-layout">
+      <div class="player-main">
+        <div class="video-wrap">
+          <iframe id="videoFrame" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+        </div>
+        <h2 id="playerTitle"></h2>
+        <div class="player-actions">
+          <a id="playerChannel" target="_blank" rel="noopener"></a>
+          <button id="likeBtn" type="button"></button>
+          <button id="followBtn" type="button"></button>
+        </div>
+        <p id="playerDesc" class="desc"></p>
+      </div>
+    </div>
+  </section>
+
+  <script src="app.js"></script>
+</body>
+</html>

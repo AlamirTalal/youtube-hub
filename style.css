@@ -1,0 +1,193 @@
+:root {
+  --bg: #f9f9f9;
+  --surface: #ffffff;
+  --text: #0f0f0f;
+  --muted: #606060;
+  --border: #e5e5e5;
+  --accent: #ff0000;
+  --chip: #f2f2f2;
+}
+
+[data-theme="dark"] {
+  --bg: #0f0f0f;
+  --surface: #212121;
+  --text: #f1f1f1;
+  --muted: #aaaaaa;
+  --border: #303030;
+  --chip: #272727;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: system-ui, "Segoe UI", Tahoma, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+}
+
+.hidden { display: none !important; }
+
+/* الهيدر */
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 16px;
+  background: var(--bg);
+  border-bottom: 1px solid var(--border);
+}
+.logo { font-size: 18px; margin: 0; color: var(--accent); white-space: nowrap; }
+.search-form { flex: 1; display: flex; max-width: 600px; margin: 0 auto; }
+.search-form input {
+  flex: 1;
+  padding: 8px 12px;
+  border: 1px solid var(--border);
+  border-radius: 20px 0 0 20px;
+  background: var(--surface);
+  color: var(--text);
+  font-size: 15px;
+}
+.search-form button {
+  padding: 8px 16px;
+  border: 1px solid var(--border);
+  border-radius: 0 20px 20px 0;
+  background: var(--chip);
+  color: var(--text);
+  cursor: pointer;
+}
+.controls { display: flex; gap: 8px; }
+.ghost {
+  background: var(--chip);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 6px 10px;
+  cursor: pointer;
+}
+
+/* التصنيفات */
+.categories {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding: 12px 16px;
+  scrollbar-width: none;
+}
+.categories button {
+  flex-shrink: 0;
+  padding: 6px 14px;
+  border: none;
+  border-radius: 8px;
+  background: var(--chip);
+  color: var(--text);
+  cursor: pointer;
+  font-size: 14px;
+}
+.categories button.active { background: var(--text); color: var(--bg); }
+
+/* التابات */
+.tabs {
+  display: flex;
+  gap: 4px;
+  padding: 0 16px 12px;
+  border-bottom: 1px solid var(--border);
+}
+.tab {
+  background: none;
+  border: none;
+  padding: 8px 12px;
+  color: var(--muted);
+  cursor: pointer;
+  font-size: 14px;
+  border-bottom: 2px solid transparent;
+}
+.tab.active { color: var(--text); border-bottom-color: var(--accent); }
+
+/* الشبكة */
+main { padding: 16px; }
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 20px 16px;
+}
+.card { cursor: pointer; }
+.card img {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+  border-radius: 10px;
+  background: var(--chip);
+}
+.card-title {
+  margin: 8px 0 4px;
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.4;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.card-channel { color: var(--muted); font-size: 13px; text-decoration: none; }
+.card-channel:hover { color: var(--text); }
+.card-desc {
+  color: var(--muted);
+  font-size: 13px;
+  margin-top: 4px;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.status { text-align: center; color: var(--muted); padding: 20px; }
+.sentinel { height: 1px; }
+
+/* صفحة الفيديو */
+.player {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  background: var(--bg);
+  overflow-y: auto;
+  padding: 16px;
+}
+.close { position: sticky; top: 0; float: inline-end; }
+.player-layout { max-width: 960px; margin: 0 auto; }
+.video-wrap {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  background: #000;
+  border-radius: 12px;
+  overflow: hidden;
+}
+.video-wrap iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+.player h2 { font-size: 20px; margin: 12px 0; }
+.player-actions { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+.player-actions a { color: var(--muted); text-decoration: none; font-weight: 600; }
+.player-actions button {
+  padding: 8px 14px;
+  border-radius: 20px;
+  border: 1px solid var(--border);
+  background: var(--chip);
+  color: var(--text);
+  cursor: pointer;
+}
+.desc {
+  white-space: pre-wrap;
+  background: var(--surface);
+  padding: 12px;
+  border-radius: 10px;
+  color: var(--text);
+  line-height: 1.6;
+}
+
+@media (max-width: 600px) {
+  .logo { display: none; }
+  .topbar { flex-wrap: wrap; }
+}
