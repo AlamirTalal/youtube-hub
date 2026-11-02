@@ -147,9 +147,7 @@ button, input { font-family: inherit; }
 .search-form input:focus {
   outline: none;
   border-color: var(--focus);
-  margin-inline-end: 0;
 }
-.search-form input:focus-visible { outline: none; }
 
 .search-btn {
   width: 64px;
@@ -200,6 +198,25 @@ button, input { font-family: inherit; }
 }
 .tab:hover { background: var(--chip); }
 .tab.active { background: var(--chip); font-weight: 500; }
+
+.tab-action {
+  width: 100%;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  margin-top: 8px;
+  padding: 0 12px;
+  border: 0;
+  border-top: 1px solid var(--line);
+  border-radius: 0 0 10px 10px;
+  background: transparent;
+  color: var(--text);
+  font-size: 14px;
+  text-align: start;
+  cursor: pointer;
+}
+.tab-action:hover { background: var(--chip); }
 
 .sidebar-collapsed .sidebar { display: none; }
 
@@ -303,15 +320,7 @@ main { padding: 0 24px 24px; }
 }
 .sentinel { height: 1px; }
 
-/* ===== صفحة الفيديو ===== */
-.player {
-  position: fixed;
-  inset: 0;
-  z-index: 50;
-  overflow-y: auto;
-  background: var(--bg);
-}
-
+/* ===== زرار الإغلاق المشترك ===== */
 .close-btn {
   position: fixed;
   top: 12px;
@@ -328,6 +337,67 @@ main { padding: 0 24px 24px; }
   cursor: pointer;
 }
 .close-btn:hover { background: var(--hover); }
+
+/* ===== صفحة الترحيب ===== */
+.welcome {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  overflow-y: auto;
+  background: var(--bg);
+  padding: 72px 24px 40px;
+}
+.welcome-close { z-index: 90; }
+.welcome-inner { max-width: 720px; margin: 0 auto; }
+.welcome h2 { margin: 0 0 8px; font-size: 28px; font-weight: 500; }
+.welcome-sub { margin: 0 0 24px; color: var(--muted); font-size: 16px; }
+.welcome h3 { margin: 28px 0 12px; font-size: 16px; font-weight: 500; }
+
+.chip-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.opt {
+  height: 36px;
+  padding: 0 16px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: transparent;
+  color: var(--text);
+  font-size: 14px;
+  cursor: pointer;
+}
+.opt:hover { background: var(--chip); }
+.opt.selected {
+  background: var(--text);
+  border-color: var(--text);
+  color: var(--bg);
+}
+
+.start-btn {
+  margin-top: 36px;
+  height: 44px;
+  padding: 0 28px;
+  border: 0;
+  border-radius: 22px;
+  background: var(--sub-bg);
+  color: var(--sub-text);
+  font-size: 15px;
+  font-weight: 500;
+  cursor: pointer;
+}
+.start-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+/* ===== صفحة الفيديو ===== */
+.player {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  overflow-y: auto;
+  background: var(--bg);
+}
 
 .player-layout {
   max-width: 1280px;
@@ -430,7 +500,7 @@ main { padding: 0 24px 24px; }
   white-space: pre-wrap;
 }
 
-/* ===== الموبايل: الشريط الجانبي يطلع كقائمة منزلقة ===== */
+/* ===== الموبايل ===== */
 @media (max-width: 900px) {
   .sidebar {
     position: fixed;
@@ -444,7 +514,7 @@ main { padding: 0 24px 24px; }
   }
   body.sidebar-open .sidebar { inset-inline-start: 0; }
   .sidebar-collapsed .sidebar { display: block; }
-  .chips-bar, main, .player-layout { padding-inline: 16px; }
+  .chips-bar, main, .player-layout, .welcome { padding-inline: 16px; }
   .grid { grid-template-columns: 1fr; gap: 24px; }
   .brand-name { display: none; }
 }
