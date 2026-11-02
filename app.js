@@ -2,7 +2,7 @@
 const i18n = {
   ar: {
     dir: "rtl",
-    appName: "YouTube Hub",
+    appName: "FakeTube",
     searchPlaceholder: "ابحث عن فيديو أو مجال...",
     searchBtn: "بحث",
     tabHome: "الرئيسية",
@@ -23,7 +23,7 @@ const i18n = {
   },
   en: {
     dir: "ltr",
-    appName: "YouTube Hub",
+    appName: "FakeTube",
     searchPlaceholder: "Search for a video or topic...",
     searchBtn: "Search",
     tabHome: "Home",
@@ -102,7 +102,8 @@ function applyLang() {
 
 function applyTheme() {
   document.documentElement.dataset.theme = theme;
-  $("#themeBtn").textContent = theme === "dark" ? "☀️" : "🌙";
+  $("#themeBtn .material-symbols-rounded").textContent =
+    theme === "dark" ? "light_mode" : "dark_mode";
 }
 
 $("#langBtn").addEventListener("click", () => {
@@ -240,9 +241,14 @@ $("#closePlayer").addEventListener("click", () => {
 function renderPlayerButtons(v) {
   const likeBtn = $("#likeBtn");
   const followBtn = $("#followBtn");
-  likeBtn.textContent = likes[v.id] ? t("liked") : t("like");
+  const liked = !!likes[v.id];
+  const following = !!follows[v.channelId];
+
+  likeBtn.innerHTML = `<span class="material-symbols-rounded">${liked ? "thumb_up" : "thumb_up_off_alt"}</span><span>${liked ? t("liked") : t("like")}</span>`;
   likeBtn.onclick = () => toggleLike(v);
-  followBtn.textContent = follows[v.channelId] ? t("following") : t("follow");
+
+  followBtn.textContent = following ? t("following") : t("follow");
+  followBtn.className = following ? "subscribed" : "subscribe";
   followBtn.onclick = () => toggleFollow(v);
 }
 
@@ -274,6 +280,7 @@ function toggleFollow(v) {
 
 // ===== التابات =====
 function switchView(view) {
+  document.body.classList.remove("sidebar-open");
   currentView = view;
   document.querySelectorAll(".tab").forEach((b) =>
     b.classList.toggle("active", b.dataset.view === view)
@@ -324,3 +331,8 @@ function renderCurrentView() {
 // ===== البداية =====
 applyTheme();
 applyLang();
+
+$("#menuBtn").addEventListener("click", () => {
+  if (window.innerWidth <= 900) document.body.classList.toggle("sidebar-open");
+  else document.body.classList.toggle("sidebar-collapsed");
+});
